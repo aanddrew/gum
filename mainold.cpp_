@@ -1,0 +1,126 @@
+#include <iostream>
+#include <stdlib.h>
+
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
+#include "math/Math.h"
+
+#include "Shader.h"
+
+#define WIDTH 1024
+#define HEIGHT 768
+
+static const GLfloat cube_data[] = {
+    -1.0f,-1.0f,-1.0f, // triangle 1 : begin
+    -1.0f,-1.0f, 1.0f,
+    -1.0f, 1.0f, 1.0f, // triangle 1 : end
+    1.0f, 1.0f,-1.0f, // triangle 2 : begin
+    -1.0f,-1.0f,-1.0f,
+    -1.0f, 1.0f,-1.0f, // triangle 2 : end
+    1.0f,-1.0f, 1.0f,
+    -1.0f,-1.0f,-1.0f,
+    1.0f,-1.0f,-1.0f,
+    1.0f, 1.0f,-1.0f,
+    1.0f,-1.0f,-1.0f,
+    -1.0f,-1.0f,-1.0f,
+    -1.0f,-1.0f,-1.0f,
+    -1.0f, 1.0f, 1.0f,
+    -1.0f, 1.0f,-1.0f,
+    1.0f,-1.0f, 1.0f,
+    -1.0f,-1.0f, 1.0f,
+    -1.0f,-1.0f,-1.0f,
+    -1.0f, 1.0f, 1.0f,
+    -1.0f,-1.0f, 1.0f,
+    1.0f,-1.0f, 1.0f,
+    1.0f, 1.0f, 1.0f,
+    1.0f,-1.0f,-1.0f,
+    1.0f, 1.0f,-1.0f,
+    1.0f,-1.0f,-1.0f,
+    1.0f, 1.0f, 1.0f,
+    1.0f,-1.0f, 1.0f,
+    1.0f, 1.0f, 1.0f,
+    1.0f, 1.0f,-1.0f,
+    -1.0f, 1.0f,-1.0f,
+    1.0f, 1.0f, 1.0f,
+    -1.0f, 1.0f,-1.0f,
+    -1.0f, 1.0f, 1.0f,
+    1.0f, 1.0f, 1.0f,
+    -1.0f, 1.0f, 1.0f,
+    1.0f,-1.0f, 1.0f
+};
+
+int main() {
+    glewExperimental = true;
+    if ( !glfwInit() ) {
+        std::cerr << "Failed to initialize GLFW\n" << std::endl;
+        return -1;
+    }
+
+    glfwWindowHint(GLFW_SAMPLES, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    GLFWwindow* window;
+    window = glfwCreateWindow( WIDTH, HEIGHT, "gum", NULL, NULL );
+    if ( window == NULL ) {
+        std::cerr << "Failed to open GLFW window." << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+
+    glfwMakeContextCurrent(window);
+    glewExperimental = true;
+    if (glewInit() != GLEW_OK) {
+        std::cerr << "Failed to initialize GLEW!" << std::endl;
+        return -1;
+    }
+
+    //triangle creation
+    GLuint VertexArrayID;
+    glGenVertexArrays(1, &VertexArrayID);
+    glBindVertexArray(VertexArrayID);
+
+    GLuint cubeBuffer;
+    glGenBuffers(1, &cubeBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, cubeBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cube_data), cube_data, GL_STATIC_DRAW);
+
+    //shaders
+    
+    GLuint programID = LoadShaders("shaders/vertex.glsl", "shaders/fragment.glsl");
+    glUseProgram(programID);
+
+    GLint mvpLocation = glGetUniformLocation(programID, "mvp");
+
+    gum::Mat4 perspective = gum::Mat4::perspective(0.01f, 200.0f, (float)(WIDTH)/(float)(HEIGHT), 90.0f);
+    gum::Mat4 model = gum::Mat4::translate(gum::Vec3(0,0,-10)) * gum::Mat4::rotate(gum::Vec3(1,1,0).normalize(), M_PI/4);
+
+    gum::Mat4 mvp = perspective * model;
+
+    glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, mvp.data());
+
+    //window stuff
+    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+
+    do {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glUseProgram(programID);
+
+        //actual drawing
+        glEnableVertexAttribArray(0);
+
+        glBindBuffer(GL_ARRAY_BUFFER, cubeBuffer);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        glDrawArrays(GL_TRIANGLES, 0, 12 * 3);
+
+        glDisableVertexAttribArray(0);
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    } while(glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && 
+            glfwWindowShouldClose(window) == 0);
+}
