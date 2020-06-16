@@ -13,5 +13,5 @@ void main() {
     gl_Position = trans;
 
     normalOut = mat3(mvp) * normal;
-    lightOut = normalize(vec3(1,0,0));
+    lightOut = normalize(vec3(0,0,-1));
 }

@@ -167,6 +167,7 @@ void Mesh::render_helper(GLuint shaderProgram, const Mat4& proj_view) {
     GLint mvpLocation = glGetUniformLocation(shaderProgram, "mvp");
     glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, mvp.data());
 
+    glEnableVertexAttribArray(vertexArray);
 	glBindVertexArray(0);
     glBindVertexArray(vertexArray);
     
