@@ -113,8 +113,8 @@ Mesh::Mesh(const std::string& objfile)
 
                 Vec3 normal(
                     tempNormals.at((normIndex -1 ) * 3 + 0),
-                    tempNormals.at((normIndex -1 ) * 3 + 0),
-                    tempNormals.at((normIndex -1 ) * 3 + 0)
+                    tempNormals.at((normIndex -1 ) * 3 + 1),
+                    tempNormals.at((normIndex -1 ) * 3 + 2)
                 );
                 normals.push_back(normal);
             }
@@ -136,19 +136,26 @@ Mesh::Mesh(const std::string& objfile)
     glGenBuffers(1, &vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices.size() * 3, vertices.data(), GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);
+
+    std::cout << "vertices.size(): " << vertices.size() << std::endl;
+    for(size_t i = 0; i < vertices.size(); i++) {
+        std::cout << vertices.at(i) << std::endl;
+    }
 
     //normals
     glGenBuffers(1, &normalBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * normals.size() * 3, normals.data(), GL_STATIC_DRAW);
-
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
     glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    std::cout << "Normals.size(): " << normals.size() << std::endl;
+    for(size_t i = 0; i < normals.size(); i++) {
+        std::cout << normals.at(i) << std::endl;
+    }
+
 }
 
 void Mesh::render_helper(GLuint shaderProgram, const Mat4& proj_view) {
@@ -160,7 +167,10 @@ void Mesh::render_helper(GLuint shaderProgram, const Mat4& proj_view) {
     GLint mvpLocation = glGetUniformLocation(shaderProgram, "mvp");
     glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, mvp.data());
 
-    glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	glBindVertexArray(0);
+    glBindVertexArray(vertexArray);
+    
+    //glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
     glDisableVertexAttribArray(vertexArray);

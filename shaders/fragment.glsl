@@ -2,16 +2,16 @@
 
 //vec3 sun_dir = vec3(1,1,0);
 
-in vec3 norm;
-in vec3 lightdirection;
+in vec3 normalOut;
+in vec3 lightOut;
 
 out vec3 color;
 void main() {
-    float cosTheta = clamp( -1*dot(norm, lightdirection), 0, 1); 
-    if (lightdirection.length() < 0.5) {
-        cosTheta = 0.5;
-    }
-    //color = vec3(1,0,0) * cosTheta;
-    color = lightdirection;
-    color = vec3(1,0,0);
+    float cosTheta = clamp( dot(normalOut, lightOut), 0.5, 1); 
+    //color = vec3(1,1,1) * cosTheta;
+    color = vec3(
+        clamp(normalOut.x, 0, 1),
+        clamp(normalOut.y, 0, 1),
+        clamp(normalOut.z, 0, 1)
+    );
 }
