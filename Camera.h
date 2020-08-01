@@ -15,8 +15,8 @@ public:
 
     //setPerspective(
 
-    Mat4 getView();
-    Mat4 getProjection();
+    Mat4 getView() const;
+    Mat4 getProjection() const;
 
     PROJECTION_TYPE getType();
 private:

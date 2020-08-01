@@ -2,6 +2,7 @@
 
 #include "math/Math.h"
 #include "Object3D.h"
+#include "Camera.h"
 
 #include <GL/glew.h>
 
@@ -18,7 +19,7 @@ public:
     float* vertexData();
     float* normalData();
 
-    virtual void render_helper(GLuint shaderProgram, const Mat4& proj_view);
+    virtual void render_helper(GLuint shaderProgram, Camera& camera, const Mat4& proj_view);
 
 private:
     std::vector<gum::Vec3> vertices;

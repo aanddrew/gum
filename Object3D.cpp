@@ -7,11 +7,16 @@
 namespace gum {
 
 Object3D::Object3D() {
+    this->parent = nullptr;
 }
 
-Mat4 Object3D::get_transform() {
-    if ( this->parent == nullptr ) {
-        return this->transform * this->parent->get_transform();
+Mat4 Object3D::local_transform() const {
+    return this->transform;
+}
+
+Mat4 Object3D::world_transform() const {
+    if ( this->parent != nullptr ) {
+        return this->parent->world_transform() * this->transform;
     }
     return this->transform;
 }
@@ -65,8 +70,9 @@ void Object3D::update(float dt) {
 void Object3D::kill() {
 }
 
-void Object3D::render_helper(GLuint shaderProgram, const Mat4& proj_view) {
+void Object3D::render_helper(GLuint shaderProgram, Camera& camera, const Mat4& proj_view) {
     (void)(shaderProgram);
+    (void)(camera);
     (void)(proj_view);
 }
 
@@ -80,8 +86,25 @@ void Object3D::render(GLuint shaderProgram) {
 
     Mat4 proj_view = camera->getProjection() * camera->getView();
     for ( auto child : children ) {
-        child->render_helper(shaderProgram, proj_view);
+        child->render_helper(shaderProgram, *camera, proj_view);
     }
+}
+
+size_t Object3D::get_num_children() { return children.size(); }
+Object3D* Object3D::get_child(size_t index) { return children.at(index); }
+
+void print_helper(Object3D* object, int level) {
+    for(int i = 0; i < level; i++) {
+        std::cout << "    ";
+    }
+    std::cout << object->name << std::endl;
+    for( size_t i = 0; i < object->get_num_children(); i++ ) {
+        print_helper(object->get_child(i), level + 1);
+    }
+}
+
+void Object3D::print() {
+    print_helper(this, 0);
 }
 
 }

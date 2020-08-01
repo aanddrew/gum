@@ -139,105 +139,37 @@ Mesh::Mesh(const std::string& objfile)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(0);
 
-    std::cout << "vertices.size(): " << vertices.size() << std::endl;
-    for(size_t i = 0; i < vertices.size(); i++) {
-        std::cout << vertices.at(i) << std::endl;
-    }
-
     //normals
     glGenBuffers(1, &normalBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * normals.size() * 3, normals.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
     glEnableVertexAttribArray(1);
-
-    std::cout << "Normals.size(): " << normals.size() << std::endl;
-    for(size_t i = 0; i < normals.size(); i++) {
-        std::cout << normals.at(i) << std::endl;
-    }
-
 }
 
-void Mesh::render_helper(GLuint shaderProgram, const Mat4& proj_view) {
+void Mesh::render_helper(GLuint shaderProgram, Camera& camera, const Mat4& proj_view) {
     glBindVertexArray(vertexArray);
 
-    Mat4 mvp = proj_view * this->get_transform();
+    Mat4 mvp = proj_view * this->world_transform();
 
     glUseProgram(shaderProgram);
+
     GLint mvpLocation = glGetUniformLocation(shaderProgram, "mvp");
     glUniformMatrix4fv(mvpLocation, 1, GL_FALSE, mvp.data());
 
-    glEnableVertexAttribArray(vertexArray);
-	glBindVertexArray(0);
-    glBindVertexArray(vertexArray);
-    
-    //glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+    GLint modelLocation = glGetUniformLocation(shaderProgram, "model");
+    glUniformMatrix4fv(modelLocation, 1, GL_FALSE, this->world_transform().data());
 
+    GLint modelViewLocation = glGetUniformLocation(shaderProgram, "modelview");
+    Mat4 mv = camera.getView() * this->world_transform();
+    glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, mv.data());
+
+    GLint cameraPosLocation = glGetUniformLocation(shaderProgram, "cameraPos");
+    glUniform3fv(cameraPosLocation, 1, camera.world_transform()[3].data());
+
+    glEnableVertexAttribArray(vertexArray);
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
     glDisableVertexAttribArray(vertexArray);
 }
-
-/*
-void Mesh::loadVAOandVBOs()
-{
-	//let's init our vao so we can store all of our data for this mesh
-	glGenVertexArrays(1, &vertexArrayObjectID);
-	glBindVertexArray(vertexArrayObjectID);
-
-	//==============Vertex Buffer=============
-	glGenBuffers(1,&vertexBufferID);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * numVertices, 
-							vertex_buffer_data, GL_STATIC_DRAW);
-
-	// (ATTRIBUTE 0) will be the vertices position
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	//========================================
-
-	//==========Texture Coord Buffer==========
-	glGenBuffers(1, &textureCoordBufferID);
-	glBindBuffer(GL_ARRAY_BUFFER, textureCoordBufferID);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*2*numVertices, 
-							texture_coord_buffer_data, GL_STATIC_DRAW);
-
-	// (ATTRIBUTE 1) will be the texture coordinates
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, textureCoordBufferID);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
-	//========================================
-
-	// std::cout << "normal_buffer_vector.size(): " << normal_buffer_vector.size() << std::endl;
-	// std::cout << "vertex_buffer_vector.size(): " << vertex_buffer_vector.size() << std::endl;
-
-	//================NORMALS FROM FILE=================
-	if (normal_buffer_data != nullptr)
-	{
-		glGenBuffers(1, &normalBufferID);
-		glBindBuffer(GL_ARRAY_BUFFER, normalBufferID);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*3*numVertices,
-			normal_buffer_data, GL_STATIC_DRAW);
-
-		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, normalBufferID);
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	}
-	//=================================================
-}
-
-void Mesh::bind() const
-{
-	//vao contains the buffers with all the data
-	//neat little thing opengl thought of there
-	glBindVertexArray(0);
-	glBindVertexArray(vertexArrayObjectID);
-}
-void Mesh::draw() const
-{
-	//our data is stored as triangulated faces in format
-	glDrawArrays(GL_TRIANGLES, 0, numVertices);
-}
-*/
 
 }

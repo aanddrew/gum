@@ -14,9 +14,9 @@ public:
     Mat4(const Mat3& mat);
     Mat4(const Vec4& first, const Vec4& second, const Vec4& third, const Vec4& fourth);
 
-    const Vec4& operator[](int index) const;
+    Vec4& operator[](int index);
     Vec4 row(int index) const;
-    const Vec4& col(int index) const;
+    Vec4& col(int index);
     Vec4 operator*(const Vec4& other) const;
     Vec3 operator*(const Vec3& other) const;
     Mat4 operator*(const Mat4& other) const;

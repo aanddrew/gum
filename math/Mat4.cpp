@@ -23,13 +23,13 @@ Mat4::Mat4(const Vec4& first, const Vec4& second, const Vec4& third, const Vec4&
     this->cols[3] = fourth;
 }
 
-const Vec4& Mat4::operator[](int index) const {
+Vec4& Mat4::operator[](int index) {
     if (index < 0 || index > 3)
         throw std::invalid_argument("Matrix index out of bounds");
     return cols[index];
 }
 
-const Vec4& Mat4::col(int index) const {
+Vec4& Mat4::col(int index) {
     return (*this)[index];
 }
 
@@ -121,6 +121,7 @@ Mat4 Mat4::perspective(float near, float far, float aspect, float fov) {
     float right = top * aspect;
     float left = bottom * aspect;
 
+    //basically copied from wikipedia
     return {
         {2 * near / (right - left), 0, 0, 0},
         {0, 2 * near/ (top - bottom), 0, 0 },

@@ -9,12 +9,14 @@
 #include <memory>
 
 namespace gum {
+class Camera;
 
 class Object3D {
 public:
     Object3D();
     
-    Mat4 get_transform();
+    Mat4 world_transform() const;
+    Mat4 local_transform() const;
     void set_transform(Mat4 transform);
     
     Object3D* get_root();
@@ -23,11 +25,16 @@ public:
     void add_child(Object3D* object);
     Object3D* find_child(const std::string& name);
 
+    size_t get_num_children();
+    Object3D* get_child(size_t index);
+
+    void print();
+
     virtual void init();
     virtual void update(float dt);
     virtual void kill();
 
-    virtual void render_helper(GLuint shaderProgram, const Mat4& proj_view);
+    virtual void render_helper(GLuint shaderProgram, Camera& camera, const Mat4& proj_view);
 
     void render(GLuint shaderProgram);
 
@@ -38,6 +45,8 @@ protected:
     
     Object3D* parent;
     std::vector<Object3D*> children;
+
+private:
 };
 
 }
