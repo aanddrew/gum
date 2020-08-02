@@ -8,6 +8,7 @@
 
 #include "Mesh.h"
 #include "Camera.h"
+#include "Light.h"
 
 #include "Shader.h"
 
@@ -105,7 +106,7 @@ int main() {
     glUseProgram(programID);
 
     //gum::Mesh mesh("res/cube.obj");
-    gum::Mesh mesh("../bhop_world/maps/starter.obj");
+    gum::Mesh mesh("res/starter.obj");
     mesh.name = "Mesh";
     gum::Object3D player;
     player.name = "Player";
@@ -115,14 +116,22 @@ int main() {
     //camera.set_transform(gum::Mat4::translate(gum::Vec3(0,0,5)));
     mesh.set_transform(gum::Mat4::rotate(gum::Vec3(1,1,0).normalize(), M_PI/3));
 
+    gum::Light light(gum::Vec3(5,12,10));
+    light.name = "light";
+    gum::Light light2(gum::Vec3(-120,164,-148));
+    light2.name ="light2";
+
     gum::Object3D root;
     root.name = "root";
+
+    root.add_child(&light);
+    root.add_child(&light2);
+
     root.add_child(&mesh);
     root.add_child(&player);
     player.add_child(&camera);
     
     player.set_transform(gum::Mat4::translate(gum::Vec3(0, 0, 5)) * player.world_transform());
-    std::cout << camera.world_transform() << std::endl;
 
     root.print();
 

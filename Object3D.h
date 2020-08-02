@@ -14,6 +14,7 @@ class Camera;
 class Object3D {
 public:
     Object3D();
+    Object3D(Vec3 pos);
     
     Mat4 world_transform() const;
     Mat4 local_transform() const;

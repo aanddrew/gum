@@ -9,8 +9,12 @@ uniform mat4 view = mat4(1.0);
 uniform mat4 modelview = mat4(1.0);
 uniform vec3 cameraPos;
 
+uniform vec3 lights[10];
+uniform int num_lights;
+
 out vec3 normalOut;
-out vec3 lightPos;
+flat out int num_lights_out;
+flat out vec3 lightsOut[10];
 out vec3 fragPos;
 out vec3 cameraPosOut;
 
@@ -23,6 +27,7 @@ void main() {
     fragPos = vec3(worldLoc / worldLoc.w);
 
     normalOut = mat3(model) * normal;
-    lightPos = vec3(5,12,10);
+    lightsOut = lights;
+    num_lights_out = num_lights;
     cameraPosOut = vec3(0,0,0);
 }

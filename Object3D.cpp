@@ -10,6 +10,11 @@ Object3D::Object3D() {
     this->parent = nullptr;
 }
 
+Object3D::Object3D(Vec3 pos) {
+    this->parent = nullptr;
+    this->transform = Mat4::identity().translate(pos);
+}
+
 Mat4 Object3D::local_transform() const {
     return this->transform;
 }
