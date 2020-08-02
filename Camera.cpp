@@ -3,7 +3,7 @@
 namespace gum {
 
 Camera::Camera(float aspect) {
-    projection = Mat4::perspective(0.01f, 200.0f, aspect, 90.0f);
+    projection = Mat4::perspective(0.01f, 1000.0f, aspect, 90.0f);
 }
 
 Mat4 Camera::getView() const {

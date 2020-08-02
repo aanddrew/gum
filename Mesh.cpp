@@ -160,6 +160,9 @@ void Mesh::render_helper(GLuint shaderProgram, Camera& camera, const Mat4& proj_
     GLint modelLocation = glGetUniformLocation(shaderProgram, "model");
     glUniformMatrix4fv(modelLocation, 1, GL_FALSE, this->world_transform().data());
 
+    GLint viewLocation = glGetUniformLocation(shaderProgram, "view");
+    glUniformMatrix4fv(viewLocation, 1, GL_FALSE, camera.getView().data());
+
     GLint modelViewLocation = glGetUniformLocation(shaderProgram, "modelview");
     Mat4 mv = camera.getView() * this->world_transform();
     glUniformMatrix4fv(modelViewLocation, 1, GL_FALSE, mv.data());

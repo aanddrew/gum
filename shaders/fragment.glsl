@@ -14,12 +14,10 @@ void main() {
     float ambient = 0.1;
     float diffuse = clamp( dot(normalOut, normalize(fragToLight)), 0, 1); 
 
-    float specularStrength = 0.3;
+    float specularStrength = 0.0;
     vec3 viewDir = normalize(cameraPosOut - fragPos);
     vec3 reflectView = normalize(reflect(viewDir, normalOut));
-    float spec = pow(max(dot(reflectView, normalize(fragToLight)), 0.0), 32);
+    float spec = pow(max(dot(reflectView, normalize(fragToLight)), 0.0), 80);
 
-    //vec3 reflectDir = normalize(reflect(normalize(-fragToLight), normalOut));
-
-    color = vec3(1,1,1) * clamp(diffuse + ambient + spec * specularStrength, 0, 1);
+    color = vec3(0.5,0.7,0.9) * clamp(diffuse + ambient + spec * specularStrength, 0, 1);
 }

@@ -104,7 +104,8 @@ int main() {
     GLuint programID = LoadShaders("shaders/vertex.glsl", "shaders/fragment.glsl");
     glUseProgram(programID);
 
-    gum::Mesh mesh("res/cube.obj");
+    //gum::Mesh mesh("res/cube.obj");
+    gum::Mesh mesh("../bhop_world/maps/starter.obj");
     mesh.name = "Mesh";
     gum::Object3D player;
     player.name = "Player";
@@ -134,7 +135,7 @@ int main() {
         //float rand1 = (float) (rand() % 256) / 256.0;
         //float rand2 = (float) (rand() % 256) / 256.0;
         //float rand3 = (float) (rand() % 256) / 256.0;
-        mesh.set_transform(gum::Mat4::rotate(gum::Vec3(1, 1, 1).normalize(), 0.003) * mesh.world_transform());
+        //mesh.set_transform(gum::Mat4::rotate(gum::Vec3(1, 1, 1).normalize(), 0.003) * mesh.world_transform());
         //player.set_transform(gum::Mat4::translate(gum::Vec3(0.1,0,0)) * player.world_transform());
         //camera.set_transform(gum::Mat4::rotate(gum::Vec3(1, 1, 1).normalize(), 0.003) * camera.world_transform());
         //camera.set_transform(gum::Mat4::rotate(gum::Vec3(1, 1, 1).normalize(), 0.003) * camera.local_transform());
@@ -142,18 +143,19 @@ int main() {
         //
 
         gum::Mat4 camera_local = camera.local_transform();
+        float speed = 0.2;
 
         if (moving[MOVE_LEFT]) {
-            player.set_transform(gum::Mat4::translate(camera_local.basis()[0] * -0.01) * player.local_transform());
+            player.set_transform(gum::Mat4::translate(camera_local.basis()[0] * -speed) * player.local_transform());
         }
         if (moving[MOVE_RIGHT]) {
-            player.set_transform(gum::Mat4::translate(camera_local.basis()[0] * 0.01) * player.local_transform());
+            player.set_transform(gum::Mat4::translate(camera_local.basis()[0] * speed) * player.local_transform());
         }
         if (moving[MOVE_FORWARD]) {
-            player.set_transform(gum::Mat4::translate(camera_local.basis()[2] * -0.01) * player.local_transform());
+            player.set_transform(gum::Mat4::translate(camera_local.basis()[2] * -speed) * player.local_transform());
         }
         if (moving[MOVE_BACKWARD]) {
-            player.set_transform(gum::Mat4::translate(camera_local.basis()[2] * 0.01) * player.local_transform());
+            player.set_transform(gum::Mat4::translate(camera_local.basis()[2] * speed) * player.local_transform());
         }
 
         if (moving[LOOK_UP]) {
