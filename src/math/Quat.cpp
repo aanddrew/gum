@@ -1,4 +1,4 @@
-#include "Quat.h"
+#include "../../include/math/Quat.h"
 
 #include <iostream>
 

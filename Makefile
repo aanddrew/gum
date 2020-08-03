@@ -1,7 +1,13 @@
 CXX=g++
-CFLAGS=-Wall -Werror -Wextra -g
+CFLAGS= -std=c++11 -Wall -Werror -Wextra -g
 LFLAGS=-lGLEW -lglfw -lGL
-#LFLAGS=-lglfw3 -pthread -ldl -lGLU -lGL -lrt -lXrandr -lXxf86vm -lXi -lXinerama -lX11
+
+SONAME=libgum.so
 
 all: 
-	$(CXX) *.cpp math/*.cpp $(CFLAGS) $(LFLAGS)
+	$(CXX) -c src/*.cpp src/math/*.cpp $(CFLAGS) $(LFLAGS) -fpic && mkdir -p build && mv *.o build
+
+install:
+	mkdir -p /usr/include/gum/
+	cp -r include/* /usr/include/gum/
+	cp libgum.so /usr/lib/

@@ -9,6 +9,9 @@ uniform mat4 view = mat4(1.0);
 uniform mat4 modelview = mat4(1.0);
 uniform vec3 cameraPos;
 
+uniform int sunExists;
+uniform vec3 sunPosition;
+
 uniform vec3 lights[10];
 uniform int num_lights;
 
@@ -16,7 +19,9 @@ out vec3 normalOut;
 flat out int num_lights_out;
 flat out vec3 lightsOut[10];
 out vec3 fragPos;
-out vec3 cameraPosOut;
+flat out vec3 cameraPosOut;
+flat out vec3 sunPositionOut;
+flat out int sunExistsOut;
 
 void main() {
     vec4 trans = mvp * vec4(location, 1.0);
@@ -30,4 +35,7 @@ void main() {
     lightsOut = lights;
     num_lights_out = num_lights;
     cameraPosOut = vec3(0,0,0);
+
+    sunPositionOut = sunPosition;
+    sunExistsOut = sunExists;
 }

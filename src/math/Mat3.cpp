@@ -1,4 +1,4 @@
-#include "Mat3.h"
+#include "../../include/math/Mat3.h"
 #include <math.h>
 
 namespace gum {

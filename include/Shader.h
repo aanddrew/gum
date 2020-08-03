@@ -67,7 +67,7 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
 	}
 
 	// Link the program
-	printf("Linking program\n");
+	printf("Linking program...\n");
 	GLuint ProgramID = glCreateProgram();
 	glAttachShader(ProgramID, VertexShaderID);
 	glAttachShader(ProgramID, FragmentShaderID);
@@ -81,6 +81,9 @@ GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path
 		glGetProgramInfoLog(ProgramID, InfoLogLength, NULL, &ProgramErrorMessage[0]);
 		printf("%s\n", &ProgramErrorMessage[0]);
 	}
+    else {
+        printf("Successfully linked!\n");
+    }
 	
 	glDetachShader(ProgramID, VertexShaderID);
 	glDetachShader(ProgramID, FragmentShaderID);

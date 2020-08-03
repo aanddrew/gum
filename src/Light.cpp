@@ -1,4 +1,4 @@
-#include "Light.h"
+#include "../include/Light.h"
 
 #include <iostream>
 
@@ -15,7 +15,10 @@ Light::Light(Vec3 pos)
         throw std::runtime_error("Too many lights!");
     }
     std::cout << "num_lights: " << num_lights << std::endl;
+    this->set_transform(gum::Mat4::translate(pos));
 }
+
+Light::Light() : Light(Vec3(0,0,0)) { }
 
 void Light::render_helper(GLuint shaderProgram, Camera& camera, const Mat4& proj_view) {
     (void)(shaderProgram);

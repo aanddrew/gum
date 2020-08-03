@@ -1,8 +1,8 @@
-#include "Object3D.h"
+#include "../include/Object3D.h"
 
 #include <iostream>
 
-#include "Camera.h"
+#include "../include/Camera.h"
 
 namespace gum {
 
@@ -75,17 +75,28 @@ void Object3D::update(float dt) {
 void Object3D::kill() {
 }
 
+//called on all children nodes
 void Object3D::render_helper(GLuint shaderProgram, Camera& camera, const Mat4& proj_view) {
-    (void)(shaderProgram);
-    (void)(camera);
-    (void)(proj_view);
+    for ( auto child : children ) {
+        child->render_helper(shaderProgram, camera, proj_view);
+    }
 }
 
+//called on root node
 void Object3D::render(GLuint shaderProgram) {
     Object3D* camera_obj = find_child("Camera");
     if (camera_obj == nullptr) {
         throw std::runtime_error("Cannot render tree without camera!");
     }
+
+    int sun_exists = 0;
+    Object3D* sun = find_child("Sun");
+    if (sun) {
+        sun_exists = 1;
+        Vec3 sun_position = sun->world_transform().origin();
+        glUniform3fv(glGetUniformLocation(shaderProgram, "sunPosition"), 1, (float*) &sun_position);
+    }
+    glUniform1iv(glGetUniformLocation(shaderProgram, "sunExists"), 1, &sun_exists);
 
     Camera* camera = (Camera*) camera_obj;
 
