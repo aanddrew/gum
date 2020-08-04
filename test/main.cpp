@@ -90,7 +90,7 @@ int main() {
 
     gum::Object3D root;
     root.name = "root";
-
+    
     //build the tree now
     root.add_child(&sun);
     root.add_child(&light);
@@ -153,7 +153,9 @@ int main() {
         glfwPollEvents();
     } while(glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && 
             glfwWindowShouldClose(window) == 0);
-
+    
+    glfwDestroyWindow(window);
+    glfwTerminate();
 }
 
 //callback function for glfw, handles keyboard input
