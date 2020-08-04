@@ -1,8 +1,8 @@
-#include "../include/gum/Object3D.h"
+#include "../../include/gum/Object3D.h"
 
 #include <iostream>
 
-#include "../include/gum/Camera.h"
+#include "../../include/gum/Camera.h"
 
 namespace gum {
 

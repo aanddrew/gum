@@ -1,4 +1,4 @@
-#include "../include/gum/Camera.h"
+#include "../../include/gum/Camera.h"
 
 namespace gum {
 

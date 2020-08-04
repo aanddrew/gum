@@ -1,4 +1,4 @@
-#include "../include/gum/Mesh.h"
+#include "../../include/gum/Mesh.h"
 
 #include <iostream>
 #include <fstream>

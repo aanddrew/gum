@@ -1,7 +1,7 @@
 #ifndef OBJECT3D_H
 #define OBJECT3D_H
 
-#include "math/Math.h"
+#include "../math/Math.h"
 
 #include <GL/glew.h>
 
