@@ -1,4 +1,6 @@
-#include "../../include/math/Mat4.h"
+#include "../../include/gum/math/Mat4.h"
+#define _USE_MATH_DEFINES //needed for windows
+#include <cmath>
 #include <math.h>
 
 #include <iostream>
@@ -115,7 +117,7 @@ Mat4 Mat4::rotate(const Vec3& axis, float angle) {
 }
 
 Mat4 Mat4::perspective(float near, float far, float aspect, float fov) {
-    float top = tan(fov * 0.5 * M_PI/180.0f) * near;
+    float top = (float) tan(fov * 0.5 * M_PI/180.0f) * near;
     float bottom = -top;
 
     float right = top * aspect;

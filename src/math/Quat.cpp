@@ -1,4 +1,4 @@
-#include "../../include/math/Quat.h"
+#include "../../include/gum/math/Quat.h"
 
 #include <iostream>
 

@@ -1,4 +1,4 @@
-#include "../../include/math/Vec2.h"
+#include "../../include/gum/math/Vec2.h"
 
 namespace gum {
 
