@@ -8,6 +8,5 @@ all:
 	$(CXX) -c src/*/*.cpp $(CFLAGS) $(LFLAGS) -fpic && mkdir -p build && mv *.o build && gcc -shared -o libgum.so build/*.o
 
 install:
-	mkdir -p /usr/include/gum/
-	cp -r include/* /usr/include/gum/
+	cp -r include/* /usr/include/
 	cp libgum.so /usr/lib/

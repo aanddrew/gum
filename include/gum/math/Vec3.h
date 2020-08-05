@@ -25,6 +25,8 @@ public:
     
     float operator[](int index) const;
 
+    float* data();
+
     float magnitude() const;
     float magnitude_squared() const;
     Vec3  normalize() const;

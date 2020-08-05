@@ -1,4 +1,4 @@
-#include "../../include/gum/Light.h"
+#include "../../include/gum/graphics/Light.h"
 
 #include <iostream>
 

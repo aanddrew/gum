@@ -90,6 +90,10 @@ float Vec3::operator[](int index) const {
     throw std::invalid_argument("Vector index out of bounds");
 }
 
+float* Vec3::data() {
+    return &x;
+}
+
 float Vec3::magnitude() const {
     return sqrt(magnitude_squared());
 }

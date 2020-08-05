@@ -1,4 +1,4 @@
-#include "../../include/gum/Mesh.h"
+#include "../../include/gum/graphics/Mesh.h"
 
 #include <iostream>
 #include <fstream>
@@ -169,9 +169,8 @@ void Mesh::render_helper(GLuint shaderProgram, Camera& camera, const Mat4& proj_
     GLint cameraPosLocation = glGetUniformLocation(shaderProgram, "cameraPos");
     glUniform3fv(cameraPosLocation, 1, camera.world_transform()[3].data());
 
-    glEnableVertexAttribArray(vertexArray);
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-    glDisableVertexAttribArray(vertexArray);
+    glBindVertexArray(vertexArray);
+    glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 }
 
 }

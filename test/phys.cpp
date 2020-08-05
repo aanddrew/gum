@@ -6,9 +6,11 @@
 
 #include <gum/gum.h>
 
+#include <gum/physics/AABB.h>
+
 //screen resolution
-#define WIDTH 1920
-#define HEIGHT 1080
+#define WIDTH 1024
+#define HEIGHT 768
 
 //this is all stuff for the keyboard input handling, view callback function at the bottom
 enum {
@@ -57,6 +59,7 @@ int main() {
         return -1;
     }
 
+
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     /* End boilerplate! */
@@ -90,6 +93,14 @@ int main() {
 
     gum::Object3D root;
     root.name = "root";
+
+    gum::AABB box1(gum::Vec3(5,10,-5));
+    box1.name = "box1";
+    gum::AABB box2(gum::Vec3(5,20,5));
+    box2.name = "box2";
+    box1.set_transform(gum::Mat4::translate(gum::Vec3(0, 0.5,0 )));
+    //camera.add_child(&box1);
+    root.add_child(&box2);
     
     //build the tree now
     root.add_child(&sun);
@@ -126,6 +137,8 @@ int main() {
         if (moving[LOOK_RIGHT]) {
             yaw -= 0.01;
         }
+        box2.set_transform(gum::Mat4::rotate(gum::Vec3(0,1,0), 0.01) * box2.local_transform());
+        box2.set_transform(gum::Mat4::translate(gum::Vec3(0.1,0,0)) * box2.local_transform());
 
         //then yaw it, then pitch it
         camera.set_transform(gum::Mat4::rotate(camera.local_transform().basis()[1], yaw) * camera.local_transform());
@@ -151,6 +164,9 @@ int main() {
         //have to swap the buffers after drawing
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        std::cout << box2.contains(camera.world_transform().origin()) << std::endl;
+
     } while(glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && 
             glfwWindowShouldClose(window) == 0);
     
