@@ -11,6 +11,20 @@
 namespace gum {
 class Camera;
 
+/*
+ * This is the fundamental class of this engine.
+ *
+ * Everything that exists inside the 3d world extends this class.
+ *
+ * The fundamental property of any Object3D is its transform - a Mat4 which 
+ * details its orientation, location, and scaling in space.
+ *
+ * In order to get an Object3D's transform relative to the world, the transform
+ * from each parent up until this object is multiplied together. This 
+ * effectively attaches objects to other ones in a tree-like structure called
+ * a scene graph.
+ */
+
 class Object3D {
 public:
     Object3D();

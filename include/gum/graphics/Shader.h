@@ -3,8 +3,13 @@
 #include <fstream>
 #include <sstream>
 
+/*
+ * This is a simple file used to load shaders into openGL
+ */
+
 GLuint LoadShadersByCode(std::string& VertexShaderCode, std::string& FragmentShaderCode);
 
+//first reads each file into a string, then calls LoadShadersByCode
 GLuint LoadShadersByPath(const char * vertex_file_path,const char * fragment_file_path){
 	// Read the Vertex Shader code from the file
 	std::string VertexShaderCode;
@@ -33,6 +38,10 @@ GLuint LoadShadersByPath(const char * vertex_file_path,const char * fragment_fil
     return LoadShadersByCode(VertexShaderCode, FragmentShaderCode);
 }
 
+//Loads the shaders from two strings containing the source code of the shader 
+//programs
+//
+//returns the handle to this program for OpenGL
 GLuint LoadShadersByCode(std::string& VertexShaderCode, std::string& FragmentShaderCode) {
 	// Create the shaders
 	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);

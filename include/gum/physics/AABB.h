@@ -7,8 +7,18 @@
 
 namespace gum {
 
-//only uses the origin to determine the corner of the object
-//aligned to the axis of the root node of its tree
+/*
+ * AABB or Axis-Aligned Bounding Box
+ *
+ * This class is a box which has a corner at its transforms origin, and 
+ * a public data member for its dimensions.
+ *
+ * The opposite corner of the box is found at its origin + dimensions.
+ *
+ * It contains useful utilities to check if a point is inside the box, or if
+ * it is intersecting with another box.
+ */
+
 class AABB : public Object3D {
 public:
     AABB();
