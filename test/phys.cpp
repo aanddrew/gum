@@ -71,6 +71,8 @@ int main() {
     GLuint programID = LoadShadersByPath("shaders/vertex.glsl", "shaders/fragment.glsl");
     glUseProgram(programID);
 
+    gum::AABB::draw_wireframes(true);
+
     //create mesh
     gum::Mesh mesh("res/starter.obj");
     mesh.name = "Mesh";
@@ -94,19 +96,22 @@ int main() {
     gum::Object3D root;
     root.name = "root";
 
-    gum::AABB box1(gum::Vec3(5,10,-5));
+    gum::AABB box1(gum::Vec3(5,10,5));
     box1.name = "box1";
     gum::AABB box2(gum::Vec3(5,20,5));
     box2.name = "box2";
-    box1.set_transform(gum::Mat4::translate(gum::Vec3(0, 0.5,0 )));
-    //camera.add_child(&box1);
+    box1.set_transform(gum::Mat4::translate(gum::Vec3(0, 0,-10 )));
+    root.add_child(&box1);
+    box1.add_child(&player);
     root.add_child(&box2);
+
+    player.set_transform(player.local_transform() * gum::Mat4::translate(box1.dimensions / 2.0f));
     
     //build the tree now
     root.add_child(&sun);
     root.add_child(&light);
     root.add_child(&mesh);
-    root.add_child(&player);
+    //root.add_child(&player);
     player.add_child(&camera);
     player.add_child(&light2);
 
@@ -124,21 +129,22 @@ int main() {
         //reset the cameras transform
         camera.set_transform(gum::Mat4::identity());
         float speed = 0.2;
+        float lookspeed = 0.02;
 
         if (moving[LOOK_UP]) {
-            pitch += 0.01;
+            pitch += lookspeed;
         }
         if (moving[LOOK_DOWN]) {
-            pitch -= 0.01;
+            pitch -= lookspeed;
         }
         if (moving[LOOK_LEFT]) {
-            yaw += 0.01;
+            yaw += lookspeed;
         }
         if (moving[LOOK_RIGHT]) {
-            yaw -= 0.01;
+            yaw -= lookspeed;
         }
         box2.set_transform(gum::Mat4::rotate(gum::Vec3(0,1,0), 0.01) * box2.local_transform());
-        box2.set_transform(gum::Mat4::translate(gum::Vec3(0.1,0,0)) * box2.local_transform());
+        box2.set_transform(gum::Mat4::translate(gum::Vec3(0.08,0,0.5)) * box2.local_transform());
 
         //then yaw it, then pitch it
         camera.set_transform(gum::Mat4::rotate(camera.local_transform().basis()[1], yaw) * camera.local_transform());
@@ -146,16 +152,16 @@ int main() {
 
         //translate the player
         if (moving[MOVE_LEFT]) {
-            player.set_transform(gum::Mat4::translate(camera.local_transform().basis()[0] * -speed) * player.local_transform());
+            player.get_parent()->set_transform(gum::Mat4::translate(camera.local_transform().basis()[0] * -speed) * player.get_parent()->local_transform());
         }
         if (moving[MOVE_RIGHT]) {
-            player.set_transform(gum::Mat4::translate(camera.local_transform().basis()[0] * speed) * player.local_transform());
+            player.get_parent()->set_transform(gum::Mat4::translate(camera.local_transform().basis()[0] * speed) * player.get_parent()->local_transform());
         }
         if (moving[MOVE_FORWARD]) {
-            player.set_transform(gum::Mat4::translate(camera.local_transform().basis()[2] * -speed) * player.local_transform());
+            player.get_parent()->set_transform(gum::Mat4::translate(camera.local_transform().basis()[2] * -speed) * player.get_parent()->local_transform());
         }
         if (moving[MOVE_BACKWARD]) {
-            player.set_transform(gum::Mat4::translate(camera.local_transform().basis()[2] * speed) * player.local_transform());
+            player.get_parent()->set_transform(gum::Mat4::translate(camera.local_transform().basis()[2] * speed) * player.get_parent()->local_transform());
         }
         
         //drawing takes place here
@@ -165,7 +171,9 @@ int main() {
         glfwSwapBuffers(window);
         glfwPollEvents();
 
-        std::cout << box2.contains(camera.world_transform().origin()) << std::endl;
+        //std::cout << box2.contains(camera.world_transform().origin()) << std::endl;
+
+        box2.push(box1);
 
     } while(glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && 
             glfwWindowShouldClose(window) == 0);

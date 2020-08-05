@@ -24,6 +24,7 @@ public:
     AABB();
     AABB(Vec3 dimensions);
     bool isTouching(AABB& other);
+    bool push(AABB& other);
     bool contains(const Vec3& point);
 
     Vec3 dimensions;
