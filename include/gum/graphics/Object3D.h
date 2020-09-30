@@ -1,5 +1,4 @@
-#ifndef OBJECT3D_H
-#define OBJECT3D_H
+#pragma once
 
 #include "../math/Math.h"
 
@@ -65,5 +64,3 @@ private:
 };
 
 }
-
-#endif
