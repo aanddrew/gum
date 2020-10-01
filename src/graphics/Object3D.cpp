@@ -6,12 +6,13 @@
 
 namespace gum {
 
-Object3D::Object3D() {
-    this->parent = nullptr;
-}
+Object3D::Object3D() 
+: Object3D(Vec3(0,0,0))
+{}
 
 Object3D::Object3D(Vec3 pos) {
     this->parent = nullptr;
+    this->shader_program = 0;
     this->transform = Mat4::identity().translate(pos);
 }
 
@@ -69,7 +70,9 @@ void Object3D::init() {
 }
 
 void Object3D::update(float dt) {
-    std::cout << dt << std::endl;
+    for ( auto child : children ) {
+        child->update(dt);
+    }
 }
 
 void Object3D::kill() {
@@ -78,15 +81,21 @@ void Object3D::kill() {
 //called on all children nodes
 void Object3D::render_helper(GLuint shaderProgram, Camera& camera, const Mat4& proj_view) {
     for ( auto child : children ) {
+        if (child->shader_program != 0) {
+            shaderProgram = child->shader_program;
+        }
         child->render_helper(shaderProgram, camera, proj_view);
     }
 }
 
 //called on root node
-void Object3D::render(GLuint shaderProgram) {
+void Object3D::render() {
     Object3D* camera_obj = find_child("Camera");
     if (camera_obj == nullptr) {
         throw std::runtime_error("Cannot render tree without camera!");
+    }
+    if (shader_program == 0) {
+        throw std::runtime_error("Root node must have a shader program attached!");
     }
 
     int sun_exists = 0;
@@ -94,15 +103,15 @@ void Object3D::render(GLuint shaderProgram) {
     if (sun) {
         sun_exists = 1;
         Vec3 sun_position = sun->world_transform().origin();
-        glUniform3fv(glGetUniformLocation(shaderProgram, "sunPosition"), 1, (float*) &sun_position);
+        glUniform3fv(glGetUniformLocation(shader_program, "sunPosition"), 1, (float*) &sun_position);
     }
-    glUniform1iv(glGetUniformLocation(shaderProgram, "sunExists"), 1, &sun_exists);
+    glUniform1iv(glGetUniformLocation(shader_program, "sunExists"), 1, &sun_exists);
 
     Camera* camera = (Camera*) camera_obj;
 
     Mat4 proj_view = camera->getProjection() * camera->getView();
     for ( auto child : children ) {
-        child->render_helper(shaderProgram, *camera, proj_view);
+        child->render_helper(shader_program, *camera, proj_view);
     }
 }
 

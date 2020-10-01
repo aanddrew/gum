@@ -50,9 +50,10 @@ public:
 
     virtual void render_helper(GLuint shaderProgram, Camera& camera, const Mat4& proj_view);
 
-    void render(GLuint shaderProgram);
+    void render();
 
     std::string name;
+    GLuint shader_program;
 
 protected:
     Mat4 transform;
