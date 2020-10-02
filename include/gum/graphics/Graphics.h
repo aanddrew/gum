@@ -3,3 +3,4 @@
 #include "Mesh.h"
 #include "Object3D.h"
 #include "Shader.h"
+#include "Image.h"
