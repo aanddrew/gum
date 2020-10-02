@@ -90,6 +90,7 @@ int main() {
 
     gum::Object3D root;
     root.name = "root";
+    root.shader_program = programID;
     
     //build the tree now
     root.add_child(&sun);
@@ -146,7 +147,7 @@ int main() {
         }
         
         //drawing takes place here
-        root.render(programID);
+        root.render();
 
         //have to swap the buffers after drawing
         glfwSwapBuffers(window);
