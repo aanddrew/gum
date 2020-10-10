@@ -137,6 +137,20 @@ Mat4 Mat4::perspective(float near, float far, float aspect, float fov) {
     };
 }
 
+
+Mat4 Mat4::ortho(float bottom, float top, float left, float right, float near, float far) {
+    return {
+        { 2.0f / (right - left), 0, 0, 0 },
+        { 0, 2.0f / (top - bottom), 0, 0 },
+        { 0, 0, -2.0f / (far -near), 0 },
+        { -1.0f * (right + left) / (right - left),
+          -1.0f * (top + bottom) / (top - bottom),
+          -1.0f * (far + near) / (far - near),
+          1.0f
+        }
+    };
+}
+
 Mat4 Mat4::identity() {
     return {
         {1,0,0,0},

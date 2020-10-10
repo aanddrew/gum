@@ -44,9 +44,12 @@ int main() {
     glEnable(GL_DEPTH_TEST);
     /* End boilerplate! */
 
+    gum::Font f("/usr/share/fonts/TTF/Arial.TTF", 16);
+
     do {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        f.draw("fuck you oliver", 500, 500, 1920, 1080);
 
         //have to swap the buffers after drawing
         glfwSwapBuffers(window);

@@ -32,6 +32,7 @@ public:
     static Mat4 identity();
 
     static Mat4 perspective(float near, float far, float ar, float fov);
+    static Mat4 ortho(float bottom, float top, float left, float right, float near, float far);
 
     friend std::ostream& operator<<(std::ostream& os, const Mat4& mat){
         os << "|" << mat.row(0) << "|" << std::endl 

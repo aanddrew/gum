@@ -1,4 +1,5 @@
 #include "../../include/gum/graphics/Font.h"
+#include "../../include/gum/graphics/Shader.h"
 #include <iostream>
 #include <GL/glew.h>
 
@@ -8,6 +9,13 @@ FT_Library Font::ft;
 FT_Face Font::face;
 int Font::num_fonts_created = 0;
 bool Font::ft_initialized = false;;
+
+unsigned int Font::shader_program = 0;
+Mat4 Font::ortho_perspective;
+
+unsigned int Font::vao = 0;
+unsigned int Font::vbo = 0;
+
 
 Font::Font(std::string file_name, int size) {
     int error;
@@ -74,7 +82,7 @@ Font::Font(std::string file_name, int size) {
             texture, 
             IVec2((int)face->glyph->bitmap.width, face->glyph->bitmap.rows),
             IVec2((int)face->glyph->bitmap_left, face->glyph->bitmap_top),
-            (unsigned int) face->glyph->advance.x
+            (unsigned int) face->glyph->advance.x / 64
         };
         characters.insert(std::pair<char, Character>(c, character));
     }
@@ -82,12 +90,66 @@ Font::Font(std::string file_name, int size) {
     error = FT_Done_Face(face);
 
     num_fonts_created++;
+
+    shader_program = LoadShadersByPath("shaders/font_vertex.glsl", "shaders/font_fragment.glsl");
+
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
 
 Font::~Font() {
     num_fonts_created--;
     if (num_fonts_created == 0) {
+        FT_Done_Face(face);
         FT_Done_FreeType(ft);
+    }
+}
+
+void Font::draw(std::string s, float x, float y, float screen_w, float screen_h) {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+    glActiveTexture(GL_TEXTURE0);
+    glBindVertexArray(vao);
+    glUseProgram(shader_program);
+
+    glUniformMatrix4fv(glGetUniformLocation(shader_program, "projection"), 1, false, ortho_perspective.data());
+
+    ortho_perspective = Mat4::ortho(0.0f, screen_h, 0.0f, screen_w, 0.0f, 50.0f);
+
+    float scale = 1.0f;
+
+    for(int i = 0; i < (int) s.length(); i++) {
+        Character c = characters.at(s[i]);
+
+        float w = c.size.x * scale;
+        float h = c.size.y * scale;
+        // update VBO for each character
+        float vertices[6][4] = {
+            { x,    y+ h,    0.0f, 0.0f },            
+            { x,    y,       0.0f, 1.0f },
+            { x+ w, y,       1.0f, 1.0f },
+
+            { x,    y+ h,    0.0f, 0.0f },
+            { x+ w, y,       1.0f, 1.0f },
+            { x+ w, y+ h,    1.0f, 0.0f }           
+        };
+
+        glBindTexture(GL_TEXTURE_2D, c.texture_id);
+        // update content of VBO memory
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); 
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        // render quad
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+        x += (c.advance) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
     }
 }
 
