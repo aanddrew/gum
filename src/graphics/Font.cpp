@@ -128,17 +128,20 @@ void Font::draw(std::string s, float x, float y, float screen_w, float screen_h)
     for(int i = 0; i < (int) s.length(); i++) {
         Character c = characters.at(s[i]);
 
+        float xpos = x + c.bearing.x * scale;
+        float ypos = y - (c.size.y - c.bearing.y) * scale;
+
         float w = c.size.x * scale;
         float h = c.size.y * scale;
         // update VBO for each character
         float vertices[6][4] = {
-            { x,    y+ h,    0.0f, 0.0f },            
-            { x,    y,       0.0f, 1.0f },
-            { x+ w, y,       1.0f, 1.0f },
+            { xpos,    ypos+ h,    0.0f, 0.0f },            
+            { xpos,    ypos,       0.0f, 1.0f },
+            { xpos+ w, ypos,       1.0f, 1.0f },
 
-            { x,    y+ h,    0.0f, 0.0f },
-            { x+ w, y,       1.0f, 1.0f },
-            { x+ w, y+ h,    1.0f, 0.0f }           
+            { xpos,    ypos+ h,    0.0f, 0.0f },
+            { xpos+ w, ypos,       1.0f, 1.0f },
+            { xpos+ w, ypos+ h,    1.0f, 0.0f }           
         };
 
         glBindTexture(GL_TEXTURE_2D, c.texture_id);
